@@ -1,21 +1,24 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Blog del laboratorio</title>
-</head>
-<body>
-  <h1>Artículos publicados</h1>
+{% extends "blog/base.html" %}
+
+{% block title %}Lab Blog &middot; Inicio{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1><i class="bi bi-journal-richtext me-2" aria-hidden="true"></i>Articulos publicados</h1>
+  <p class="subtitle">Explora los articulos mas recientes del laboratorio</p>
+</div>
+
+{% if posts %}
+<div class="posts-grid">
   {% for post in posts %}
-    <article>
-      <h2>{{ post.title }}</h2>
-      <p>Por {{ post.author.name }} · {{ post.published_at|date:"d/m/Y" }}</p>
-      <p>
-        {% for tag in post.tags.all %}<span>#{{ tag.name }}</span>{% empty %}<em>sin etiquetas</em>{% endfor %}
-      </p>
-    </article>
-  {% empty %}
-    <p>No hay artículos publicados.</p>
+    {% include "blog/partials/_post_card.html" with post=post %}
   {% endfor %}
-</body>
-</html>
+</div>
+{% else %}
+<div class="empty-state">
+  <i class="bi bi-journal-x" aria-hidden="true"></i>
+  <h2>No hay articulos publicados</h2>
+  <p>Cuando se publiquen articulos, apareceran aqui para que puedas explorarlos.</p>
+</div>
+{% endif %}
+{% endblock %}

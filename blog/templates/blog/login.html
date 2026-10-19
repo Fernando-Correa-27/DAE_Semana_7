@@ -1,0 +1,36 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Iniciar sesion · Lab Blog{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <div class="auth-header">
+    <i class="bi bi-box-arrow-in-right auth-icon" aria-hidden="true"></i>
+    <h1>Iniciar sesion</h1>
+    <p class="subtitle">Accede para participar en el Lab Blog</p>
+  </div>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+    </div>
+    {% endif %}
+
+    {% for field in form %}
+      {% include "blog/partials/_field.html" with field=field %}
+    {% endfor %}
+
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <button type="submit" class="btn btn-primary btn-block">
+      <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Entrar
+    </button>
+  </form>
+
+  <p class="auth-footer">
+    No tienes cuenta? <a href="{% url 'blog:register' %}">Registrate</a>
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+<nav class="navbar" aria-label="Navegacion principal">
+  <div class="navbar-inner">
+    <a href="{% url 'blog:front_page' %}" class="navbar-brand">
+      <svg class="navbar-brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+      </svg>
+      <span>Lab Blog</span>
+    </a>
+
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'blog:front_page' %}">
+          <i class="bi bi-house-fill" aria-hidden="true"></i><span>Inicio</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'blog:post_list' %}">
+          <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i><span>Articulos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'blog:category_list' %}">
+          <i class="bi bi-folder-fill" aria-hidden="true"></i><span>Categorias</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'blog:tag_list' %}">
+          <i class="bi bi-tags-fill" aria-hidden="true"></i><span>Etiquetas</span>
+        </a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav navbar-nav-actions">
+      {% if user.is_authenticated %}
+        {% if perms.blog.add_post %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'blog:post_create' %}">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i><span>Nuevo articulo</span>
+          </a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'blog:profile' %}">
+            <i class="bi bi-person-circle" aria-hidden="true"></i><span>{{ user.username }}</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <form class="logout-form" method="post" action="{% url 'blog:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="nav-link nav-link-button">
+              <i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Salir</span>
+            </button>
+          </form>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'blog:login' %}">
+            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i><span>Entrar</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-primary btn-sm" href="{% url 'blog:register' %}">
+            <i class="bi bi-person-plus" aria-hidden="true"></i><span>Registrarse</span>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

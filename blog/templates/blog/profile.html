@@ -1,0 +1,45 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Mi perfil · Lab Blog{% endblock %}
+
+{% block content %}
+<div class="page-header with-action">
+  <div>
+    <h1><i class="bi bi-person-circle me-2" aria-hidden="true"></i>{{ profile.author.name }}</h1>
+    <p class="subtitle">{{ profile.country }}</p>
+  </div>
+  <a href="{% url 'blog:profile_edit' %}" class="btn btn-primary">
+    <i class="bi bi-pencil" aria-hidden="true"></i> Editar perfil
+  </a>
+</div>
+
+<div class="profile-grid">
+  <div class="info-card">
+    <h2 class="section-title"><i class="bi bi-info-circle" aria-hidden="true"></i> Datos</h2>
+    <dl class="detail-list">
+      <dt>Usuario</dt><dd>{{ user.username }}</dd>
+      <dt>Correo</dt><dd>{{ user.email|default:"-" }}</dd>
+      <dt>Autor</dt><dd>{{ profile.author.name }}</dd>
+      <dt>Pais</dt><dd>{{ profile.country }}</dd>
+    </dl>
+    {% if profile.bio %}
+    <h2 class="section-title"><i class="bi bi-card-text" aria-hidden="true"></i> Biografia</h2>
+    <p class="bio-text">{{ profile.bio|linebreaksbr }}</p>
+    {% endif %}
+  </div>
+
+  <div class="info-card">
+    <h2 class="section-title"><i class="bi bi-journal-text" aria-hidden="true"></i> Mis articulos</h2>
+    <ul class="plain-list">
+      {% for post in profile.author.posts.all %}
+      <li>
+        <a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a>
+        {% if not post.published %}<span class="status-badge draft">Borrador</span>{% endif %}
+      </li>
+      {% empty %}
+      <li class="muted">Todavia no has escrito articulos.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Editar perfil · Lab Blog{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1><i class="bi bi-pencil-square me-2" aria-hidden="true"></i>Editar perfil</h1>
+</div>
+
+<form method="post" class="card-form" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+  <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  {% for field in form %}
+    {% include "blog/partials/_field.html" with field=field %}
+  {% endfor %}
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-check-lg" aria-hidden="true"></i> Guardar
+    </button>
+    <a class="btn btn-outline" href="{% url 'blog:profile' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

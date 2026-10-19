@@ -1,0 +1,10 @@
+{% if messages %}
+<div class="messages" role="status" aria-live="polite">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags|default:'info' }}">
+    <i class="bi bi-info-circle alert-icon" aria-hidden="true"></i>
+    <span>{{ message }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

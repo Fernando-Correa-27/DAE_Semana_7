@@ -23,8 +23,10 @@ class DuelTests(TestCase):
     def test_reference_solutions_are_all_correct_and_cheap(self):
         self.assertEqual(set(self.statuses("solutions").values()), {"ok"})
 
-    def test_the_starter_has_nothing_written(self):
-        self.assertEqual(set(self.statuses("team").values()), {"todo"})
+    def test_the_team_answered_every_question_correctly(self):
+        # The starter had all answers blank; the team has since written and
+        # verified its eight ORM queries (see entregable.md), so they are all ok.
+        self.assertEqual(set(self.statuses("team").values()), {"ok"})
 
     def test_the_assistant_fails_where_the_lab_says(self):
         self.assertEqual(

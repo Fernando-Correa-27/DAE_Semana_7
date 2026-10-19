@@ -58,7 +58,7 @@ QUESTIONS = [
     Question(
         key="q3",
         text="Los artículos publicados entre el 1 de marzo y el 31 de mayo de 2026, "
-             "ambos días incluidos.",
+                "ambos días incluidos.",
         contract="un QuerySet (o lista) de Post",
         expected=sorted(
             p["title"] for p in POSTS
@@ -76,7 +76,7 @@ QUESTIONS = [
     Question(
         key="q5",
         text="Los tres artículos publicados con más comentarios, y de cada uno cuántos "
-             "comentarios y cuántas etiquetas tiene.",
+                "comentarios y cuántas etiquetas tiene.",
         contract="un QuerySet de Post ordenado, anotado con `n_comments` y `n_tags`",
         expected=_expected_top_three(),
         normalize=lambda posts: [(p.title, p.n_comments, p.n_tags) for p in list(posts)[:3]],

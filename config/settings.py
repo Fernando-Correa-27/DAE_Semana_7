@@ -29,6 +29,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
+
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
@@ -61,4 +63,15 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [
+    BASE_DIR / "blog" / "static",
+]
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Authentication ---
+LOGIN_URL = "blog:login"
+LOGIN_REDIRECT_URL = "blog:front_page"
+LOGOUT_REDIRECT_URL = "blog:front_page"

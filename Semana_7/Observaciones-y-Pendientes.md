@@ -4,88 +4,73 @@
 
 ---
 
-## Problemas identificados
+## Problemas resueltos
 
-### 1. N+1 en `front_page` (queries.py:6-12)
+### ✅ 1. N+1 en `front_page` (queries.py) — RESUELTO
 
-**Archivo:** `blog/queries.py`
-
+**Solución aplicada:**
 ```python
 def posts_for_front_page():
-    """
-    TODO: this is a terrible query, improve it!
-    """
-    return Post.objects.all()
+    return (
+        Post.objects.filter(published=True)
+        .select_related("author", "category")
+        .prefetch_related("tags")
+        .order_by("-published_at")
+    )
 ```
 
-**Problema:** `Post.objects.all()` genera:
-- 1 consulta para posts
-- 1 consulta por cada autor accedido (N)
-- 1 consulta por cada categoría accedida (N)
-- 1 consulta por cada tag accedido (M:N, N consultas)
-
-**Solución recomendada:**
-```python
-def posts_for_front_page():
-    return Post.objects.select_related('author', 'category').prefetch_related('tags').all()
-```
-
-**Test asociado:** `test_front_page_min_queries` espera exactamente 2 consultas.
+**Resultado:** `test_front_page_runs_two_queries` pasa. Medición real: **32 → 2**
+consultas.
 
 ---
 
-### 2. La IA pierde 3 de 8 preguntas en el duelo
+### ✅ 2. Duelo completo — RESUELTO
 
-| Pregunta | Problema |
-|----------|----------|
-| P4 | Usa `tags__name='Python'` en vez de `tags__id=1` → resultado diferente |
-| P5 | N+1 (11 consultas vs 4 del oráculo) → orden diferente |
-| P8 | Usa `Count('author__posts')` en vez de `Count('comments')` → conteo incorrecto |
+**Resultado:** Equipo humano **8/8 correctas** vs IA **3/8 correctas**.
 
----
-
-### 3. La IA gana en cantidad pero no en calidad
-
-- La IA resuelve 5/8 preguntas correctamente (vs 3 del oráculo)
-- Pero usa más consultas SQL: 14 vs 9
-- Las preguntas que gana la IA son las más simples (P1, P2, P3, P6, P7)
-- Las que pierde son las que requieren conocimiento específico del ORM (P4, P5, P8)
+**Errores de la IA identificados:**
+- Q3: Límites exclusivos (`gt`/`lt`) en vez de inclusivos (`gte`/`lte`)
+- Q4: Filtro en Python (N+1, 16 consultas) en vez de `annotate()`
+- Q5: `Count` sin `distinct=True` (números inflados)
+- Q6: Ignoró el modelo `Profile` intermedio (`author__country` inexistente)
+- Q8: `filter(posts__published=False)` equivocado
 
 ---
 
-## Próximos pasos recomendados
+### ✅ 3. Seguridad del Agent — RESUELTO
 
-### Fase 1: Corrección de N+1
-1. Modificar `blog/queries.py` para usar `select_related` y `prefetch_related`
-2. Verificar que `test_front_page_min_queries` pasa
-3. Confirmar que la vista renderiza correctamente
-
-### Fase 2: Completar el Duelo
-1. Implementar las 8 respuestas en `blog/duel/team.py`
-2. Ejecutar `python manage.py duel` para comparar
-3. Documentar diferencias y costos
-
-### Fase 3: Integración LLM real
-1. Reemplazar `parse_intents` stub con integración real (OpenAI, Claude, etc.)
-2. Configurar API keys de forma segura (variables de entorno)
-3. Testing con prompts reales
-
-### Fase 4: Persistencia de aprobaciones
-1. Almacenar hashes de aprobación en base de datos
-2. UI para revisión humana de acciones pendientes
-3. Log de auditoría de acciones ejecutadas
+**Verificaciones realizadas:**
+- R0 (lectura) funciona sin hash ✅
+- R2 (destrucción) requiere hash válido ✅
+- Invalidación por hash: al cambiar los datos, el hash viejo se rechaza
+  (`cd78643bb9a9` → `b2bac4d78629`) ✅
+- Intención desconocida (`run_sql`) denegada ✅
+- `test_agent.py`: todos los tests pasando ✅
 
 ---
 
-## Notas técnicas
+## Observaciones técnicas
 
 - **Base de datos:** SQLite (no recomendado para producción)
-- **Framework de tests:** pytest + pytest-django
-- **Versión de Django:** 5.2+
+- **Framework de tests:** runner de Django (`python manage.py test`)
+- **Versión de Django:** `>=5.2,<7`
 - **Python:** requerido (verificar versión con `python --version`)
 - **Instalación de dependencias:** `pip install -r requirements.txt`
+- **Comandos de PowerShell:** para pasar JSON con comillas dobles a `agent` usar `--%`
 
----
+## Notas finales
+
+- El `test_seed_counts` original describía las cantidades del starter; el seed se
+  recreó para el laboratorio (4 Authors, 15 Posts, 23 Comments). Ver `test_seed.py`.
+- Se corrigió el test obsoleto `test_the_starter_has_nothing_written` de
+  `test_duel.py`: el equipo ya respondió las 8 preguntas, así que ahora se
+  verifica que todas estén en estado `ok`.
+- El entregable final se compiló en `entregable.md`.
+- Transformación completa del blog documentada en [[Blog-Funcionalidades]].
+
+## Estado final de la suite
+
+`python manage.py test` → **66 tests, OK (2 skipped)**.
 
 ## Notas relacionadas
 
@@ -95,3 +80,5 @@ def posts_for_front_page():
 - [[Pasarela-de-Acciones-Agent]]
 - [[Management-Commands]]
 - [[Pruebas-Automatizadas]]
+- [[Blog-Funcionalidades]]
+

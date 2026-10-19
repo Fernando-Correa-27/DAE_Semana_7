@@ -1,153 +1,52 @@
 # Pruebas Automatizadas
 
-> Suite de tests con pytest y pytest-django.
+> Suite del proyecto. Usa el **runner de Django** (no pytest).
 
 ---
 
-## Configuración
+## Cómo ejecutar
 
-- **Framework:** `pytest` + `pytest-django`
-- **Configuración:** `pyproject.toml` → `[tool.pytest.ini_options]`
-  - `DJANGO_SETTINGS_MODULE = "config.settings"`
-  - `pythonpath = ["."]`
-
----
-
-## Tests
-
-### `test_front_page.py` — Optimización N+1
-
-**Archivo:** `blog/tests/test_front_page.py`
-
-```python
-@pytest.mark.django_db
-def test_front_page_min_queries(client):
-    """La vista debe usar select_related / prefetch_related para no tener N+1."""
-    # Seed datos
-    call_command("seed_blog")
-    # Ejecutar vista
-    with assert_num_queries(2):
-        response = client.get("/")
-    # Verificar que se muestran los posts
-    assert b"Título del post 1" in response.content
-    assert b"Título del post 2" in response.content
+```powershell
+python manage.py test                          # toda la suite
+python manage.py test blog.tests.test_auth     # un módulo
+python manage.py test blog.tests.test_front_page -v 2
 ```
 
-**Propósito:** Asegurar que la página principal genere exactamente **2 consultas SQL** (una para posts con `select_related`, otra para tags con `prefetch_related`).
-
-**Estado actual:** **Fallará** hasta que se corrija `queries.py` (el `TODO` indica que falta agregar `select_related` y `prefetch_related`).
+Resultado actual: **66 tests, OK** (2 omitidos porque no existe `teacher/`).
 
 ---
 
-### `test_duel.py` — Consistencia del Duelo
+## Archivos de tests (`blog/tests/`)
 
-**Archivo:** `blog/tests/test_duel.py`
-
-```python
-class TestDuelOracleConsistency:
-    def test_ai_fails_p4(self):
-        """El código proporcionado falla P4: usa tags__name='Python' vs tags__id=1."""
-    
-    def test_ai_fails_p5_n_plus_1(self):
-        """El código proporcionado falla P5: no usa annotate/Count, genera N+1."""
-    
-    def test_ai_fails_p8_wrong_count(self):
-        """El código proporcionado falla P8: usa Count('author__posts') en vez de Count('comments')."""
-    
-    def test_oracle_matches_seed(self):
-        """El oráculo produce las mismas respuestas que seed_data si se siembra primero."""
-```
-
-**Propósito:** Verificar que el oráculo es consistente con los datos seed y que las fallas conocidas de la IA se mantienen (no regressiones).
+| Archivo | Cubre |
+|---------|-------|
+| `test_front_page.py` | La portada muestra los publicados y gasta **exactamente 2 consultas** |
+| `test_models.py` | `Author.user`, `SET_NULL`, `Profile` 1-a-1, `ArticleTag` (through + unicidad), `Comment.clean()`, `SET_NULL` de categoría |
+| `test_auth.py` | Registro (crea User+Author+Profile, no concede staff), login, logout por POST, perfil propio |
+| `test_permissions.py` | Permisos nativos, visibilidad de borradores, CRUD prohibido sin permiso, propiedad de comentarios |
+| `test_crud.py` | CRUD de posts/categorías/etiquetas vía HTTP y plantilla de detalle |
+| `test_seed.py` | Conteos del seed |
+| `test_agent.py` | Seguridad de la pasarela (R0/R2) |
+| `test_duel.py` | Consistencia del oráculo y estado del equipo |
 
 ---
 
-### `test_agent.py` — Seguridad del Agent
+## Detalles relevantes
 
-**Archivo:** `blog/tests/test_agent.py`
+### `test_front_page.py`
 
-```python
-class TestAgentSecurity:
-    def test_r0_read_no_approval(self):
-        """R0 (lectura) debe funcionar sin hash de aprobación."""
-    
-    def test_r1_create_requires_approval(self):
-        """R1 (crear) debe fallar sin hash."""
-    
-    def test_r1_create_with_valid_hash(self):
-        """R1 (crear) debe funcionar con hash válido."""
-    
-    def test_r1_create_with_invalid_hash(self):
-        """R1 (crear) debe rechazar hash inválido."""
-    
-    def test_r3_delete_requires_approval(self):
-        """R3 (borrar) debe fallar sin hash."""
-    
-    def test_untrusted_data_r0(self):
-        """Los datos no confiables no pueden causar ejecución arbitraria en R0."""
-    
-    def test_untrusted_data_r1(self):
-        """Los datos no confiables no pueden evadir la aprobación en R1."""
-```
+- `test_front_page_runs_two_queries` — `assertNumQueries(2)`. Es el test "del rojo
+  al verde" de la Parte 2: pasa gracias a `select_related` + `prefetch_related` en
+  `blog/queries.py`.
+- `test_front_page_shows_the_published_posts` — verifica el contenido.
+- `test_the_reference_solution_is_green` — se **omite** sin `teacher/`.
 
-**Propósito:** Validar que la pasarela de seguridad:
-- Acepta lecturas sin aprobación (R0)
-- Requiere hash para escritura/destrucción (R1–R3)
-- Rechaza hashes inválidos
-- Es resistente a datos no confiables (inyección de acciones maliciosas)
+### `test_duel.py`
 
----
-
-### `test_seed.py` — Validación del Seed
-
-**Archivo:** `blog/tests/test_seed.py`
-
-```python
-class TestSeedData:
-    def test_seed_counts(self):
-        """Verifica que seed_blog crea el número correcto de entidades."""
-        call_command("seed_blog")
-        assert Author.objects.count() == 3
-        assert Profile.objects.count() == 3
-        assert Category.objects.count() == 3
-        assert Tag.objects.count() == 3
-        assert Post.objects.count() == 2
-        assert Comment.objects.count() == 3
-```
-
-**Propósito:** Asegurar que el seed crea exactamente las cantidades esperadas.
-
----
-
-## Ejecutar tests
-
-```bash
-pytest
-# o con más detalle:
-pytest -v
-# o solo tests fallidos:
-pytest --tb=short
-```
-
----
-
-## Resumen de estado esperado
-
-| Test | Estado esperado (sin cambios) |
-|------|-------------------------------|
-| `test_front_page_min_queries` | **FAIL** (N+1 no corregido) |
-| `test_ai_fails_p4` | **PASS** |
-| `test_ai_fails_p5_n_plus_1` | **PASS** |
-| `test_ai_fails_p8_wrong_count` | **PASS** |
-| `test_oracle_matches_seed` | **PASS** |
-| `test_r0_read_no_approval` | **PASS** |
-| `test_r1_create_requires_approval` | **PASS** |
-| `test_r1_create_with_valid_hash` | **PASS** |
-| `test_r1_create_with_invalid_hash` | **PASS** |
-| `test_r3_delete_requires_approval` | **PASS** |
-| `test_untrusted_data_r0` | **PASS** |
-| `test_untrusted_data_r1` | **PASS** |
-| `test_seed_counts` | **PASS** |
+`DuelTests.test_the_team_answered_every_question_correctly` verifica que las 8
+respuestas del equipo estén en estado `ok`. (Reemplaza a la aserción original del
+starter `test_the_starter_has_nothing_written`, ya obsoleta porque el equipo
+completó las respuestas.)
 
 ---
 
@@ -159,3 +58,4 @@ pytest --tb=short
 - [[Pasarela-de-Acciones-Agent]]
 - [[Management-Commands]]
 - [[Observaciones-y-Pendientes]]
+- [[Blog-Funcionalidades]]

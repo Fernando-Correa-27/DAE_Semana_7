@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "772ea574a4de7913",
+        "id": "31d882ed35d5971b",
         "type": "tabs",
         "children": [
           {
-            "id": "c4ae65f3771f1dd3",
+            "id": "7a4ca7879da68b19",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -181,16 +181,17 @@
       "bases:Crear nueva base": false
     }
   },
-  "active": "c4ae65f3771f1dd3",
+  "active": "7a4ca7879da68b19",
   "lastOpenFiles": [
+    "Blog-Funcionalidades.md",
+    "Management-Commands.md",
+    "Arquitectura-del-proyecto.md",
     "Pruebas-Automatizadas.md",
     "Analisis-del-proyecto.md",
     "Bienvenido.md",
     "Observaciones-y-Pendientes.md",
-    "Management-Commands.md",
     "Pasarela-de-Acciones-Agent.md",
     "Consultas-ORM-y-Duelo.md",
-    "Modelos-y-base-de-datos.md",
-    "Arquitectura-del-proyecto.md"
+    "Modelos-y-base-de-datos.md"
   ]
 }

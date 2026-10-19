@@ -1,101 +1,90 @@
 # Consultas ORM y Duelo
 
-> Sistema de comparativa entre respuestas humanas e IA para ocho preguntas ORM.
+> Comparativa entre las respuestas humanas y las de la IA para ocho preguntas
+> sobre el ORM de Django. Base: `blog/duel/`.
 
 ---
 
-## Estructura del Duelo
-
-El sistema de duelo está en `blog/duel/` y consta de cuatro archivos principales:
+## Estructura
 
 | Archivo | Propósito |
 |---------|-----------|
-| `questions.py` | Define las 8 preguntas, sus consultas, y el oráculo con respuestas esperadas |
-| `runner.py` | Lógica de ejecución: compara respuestas, cuenta consultas SQL |
-| `team.py` | **Estudiante:** respuestas del equipo humano (todos `NotImplementedError`) |
-| `ai_answers.py` | Respuestas generadas por IA (incluye respuestas incorrectas y costos SQL) |
+| `blog/duel/questions.py` | Las 8 preguntas, su respuesta esperada (oráculo en Python puro) y el presupuesto de consultas |
+| `blog/duel/runner.py` | Ejecuta cada respuesta, la compara con el oráculo y cuenta las consultas SQL |
+| `blog/duel/team.py` | Respuestas del equipo (funciones `q1`..`q8`) |
+| `blog/duel/ai_answers.py` | Respuestas de la IA, tal como las escribió |
+
+El oráculo se calcula desde `blog/seed_data.py` con Python puro (sin ORM), así que
+la respuesta correcta se conoce de antemano.
 
 ---
 
-## Las 8 Preguntas
+## Las 8 preguntas y las respuestas del equipo
 
-### P1 — Todos los posts
-- **Consulta:** `Post.objects.all()`
-- **Ordenación:** Ninguna
-- **Respuesta esperada (oráculo):** `"Título del post 1\n\nTítulo del post 2\n"`
-- **Notas:** Muestra que no hay orden implícito en `all()`
-
-### P2 — Posts ordenados por fecha
-- **Consulta:** `Post.objects.all().order_by('-published_at')`
-- **Ordenación:** descendente por `published_at`
-- **Respuesta esperada:** `"Título del post 2\n\nTítulo del post 1\n"`
-
-### P3 — Posts de un autor específico
-- **Consulta:** `Post.objects.filter(author_id=1)` (author_id=1 = Ada Lovelace)
-- **Respuesta esperada:** `"Título del post 1\n"` (solo el post de Ada)
-- **Notas:** Filtrado por FK
-
-### P4 — Posts con un tag específico
-- **Consulta:** `Post.objects.filter(tags__id=1)` (tag_id=1 = Python)
-- **Respuesta esperada:** `"Título del post 1\n"`
-- **Notas:** Uso de lookup `__` para M2M
-
-### P5 — Contar comentarios por post
-- **Consulta:** Loop `for post in Post.objects.all(): post.comments.count()`
-- **Respuesta esperada:** `"Post 1: 1 comentarios\nPost 2: 2 comentarios\n"`
-- **Notas:** Pregunta sobre N+1 — cada `.count()` genera una consulta separada
-
-### P6 — Posts con autor y categoría
-- **Consulta:** `Post.objects.select_related('author', 'category').all()`
-- **Ordenación:** `-published_at`
-- **Respuesta esperada:** Muestra título, autor y categoría ordenados
-- **Notas:** `select_related` para optimizar FK joins
-
-### P7 — Posts con tags (prefetch)
-- **Consulta:** `Post.objects.prefetch_related('tags').all()`
-- **Respuesta esperada:** Título + lista de tags por post
-- **Notas:** `prefetch_related` para optimizar M2M
-
-### P8 — Posts con conteo de comentarios optimizado
-- **Consulta:** `Post.objects.annotate(comment_count=Count('comments'))`
-- **Respuesta esperada:** `"Post 1 (1 comentarios)\nPost 2 (2 comentarios)\n"`
-- **Notas:** Uso de `annotate()` + `Count()` para evitar N+1
+| q | Pregunta | Respuesta del equipo | 1ª consulta |
+|---|----------|----------------------|-------------|
+| q1 | Artículos publicados | `Post.objects.filter(published=True)` | 1 |
+| q2 | Artículos sin categoría | `Post.objects.filter(category__isnull=True)` | 1 |
+| q3 | Publicados entre 2026-03-01 y 2026-05-31 (ambos incluidos) | `filter(published=True, published_at__gte=date(2026,3,1), published_at__lte=date(2026,5,31))` | 1 |
+| q4 | Artículos con más de 2 comentarios | `annotate(n_comments=Count("comments")).filter(n_comments__gt=2)` | 1 |
+| q5 | Top 3 publicados por comentarios, con `n_comments` y `n_tags` | `annotate(n_comments=Count("comments", distinct=True), n_tags=Count("tags", distinct=True)).order_by("-n_comments")[:3]` | 1 |
+| q6 | Artículos de autores de Perú | `Post.objects.filter(author__profile__country="Perú")` | 1 |
+| q7 | Comentarios de artículos de «Tecnología» | `Comment.objects.filter(post__category__name="Tecnología")` | 1 |
+| q8 | Autores que nunca publicaron | `Author.objects.exclude(posts__published=True).distinct()` | 1 |
 
 ---
 
-## Runner (lógica de comparación)
+## Resultado del duelo
 
-El `runner.py` hace lo siguiente:
+### Equipo (`python manage.py duel`)
 
-1. Para cada pregunta:
-   - Ejecuta la consulta del oráculo (`get_expected_output`)
-   - Ejecuta la consulta del equipo humano (`team_answers`)
-   - Ejecuta la consulta de la IA (`ai_answers`)
-   - Compara textos y reporta diferencias
-   - Cuenta cuántas consultas SQL ejecutó cada versión (`connection.queries`)
+```
+q1 [OK] 1  q2 [OK] 1  q3 [OK] 1  q4 [OK] 1
+q5 [OK] 1  q6 [OK] 1  q7 [OK] 1  q8 [OK] 1
+8 de 8 correctas y baratas.
+```
 
-2. Al final, resume:
-   - Cuántas preguntas ganó el equipo humano
-   - Cuántas ganó la IA
-   - Cuántas quedaron empatadas
-   - Costo total en consultas SQL para cada bando
+### IA (`python manage.py duel --source ai`)
+
+| q | Estado | Consultas | Problema |
+|---|--------|-----------|----------|
+| q1 | OK | 1 | — |
+| q2 | OK | 1 | — |
+| q3 | wrong | 1 | `published_at__gt` / `__lt` (excluye fronteras) → faltan 2 artículos |
+| q4 | costly | 16 | filtra en Python con `post.comments.count()` (N+1) |
+| q5 | wrong | 1 | `Count` sin `distinct=True` → números inflados (18/12/8 vs 6/4/3) |
+| q6 | error | 0 | `author__country` no existe (`FieldError`; el campo está en `Profile`) |
+| q7 | OK | 1 | — |
+| q8 | wrong | 1 | `filter(posts__published=False)` incluye autores con borradores |
+
+**Resultado: equipo 8/8 correctas y baratas vs IA 3/8.**
 
 ---
 
-## Respuestas de la IA (ai_answers.py)
+## Análisis de los fallos de la IA
 
-| Pregunta | Correcta | Consultas | Problema |
-|----------|----------|-----------|----------|
-| P1 | ✅ | 1 | — |
-| P2 | ✅ | 1 | — |
-| P3 | ✅ | 1 | — |
-| P4 | ❌ | 1 | Usa `filter(tags__name='Python')` (por nombre en vez de ID, da resultado diferente) |
-| P5 | ❌ | 11 | N+1 (1 base + 3 por cada `.count()`). El oráculo espera 4 |
-| P6 | ✅ | 1 | `select_related` correcto |
-| P7 | ✅ | 2 | `prefetch_related` correcto (1 para posts, 1 para tags) |
-| P8 | ❌ | 1 | Usa `Count('author__posts')` en vez de `Count('comments')` |
+| q | Error | Corrección |
+|---|-------|------------|
+| q3 | Límites exclusivos (`gt`/`lt`) | `gte`/`lte` (el enunciado dice "ambos días incluidos") |
+| q4 | Filtrado en Python | `annotate(Count("comments")).filter(...)` en una consulta |
+| q5 | `Count` sin `distinct=True` | añadir `distinct=True` para no contar filas duplicadas por los JOINs |
+| q6 | `author__country` | `author__profile__country` (el país vive en `Profile`) |
+| q8 | `filter(posts__published=False)` | `exclude(posts__published=True).distinct()` |
 
-**Total:** IA gana 5/8, el oráculo 3/8. IA usa 14 consultas vs 9 del oráculo.
+### SQL que lo justifica (q8)
+
+```
+TEAM: SELECT DISTINCT ... FROM blog_author
+      WHERE NOT (EXISTS(SELECT 1 FROM blog_post U1
+                        WHERE U1.published AND U1.author_id = blog_author.id LIMIT 1))
+
+AI  : SELECT ... FROM blog_author
+      INNER JOIN blog_post ON blog_author.id = blog_post.author_id
+      WHERE NOT blog_post.published
+```
+
+El equipo usa `NOT EXISTS` (autor sin ningún post publicado); la IA usa un `JOIN`
+que selecciona autores con algún borrador, no los que nunca publicaron.
 
 ---
 

@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from blog import seed_data
-from blog.models import Author, Category, Comment, Post, Profile, Tag
+from blog.models import ArticleTag, Author, Category, Comment, Post, Profile, Tag
 
 
 class Command(BaseCommand):
@@ -11,7 +11,7 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         # Comments and posts go first; authors, categories and tags after them.
-        for model in (Comment, Post, Profile, Author, Category, Tag):
+        for model in (ArticleTag, Comment, Post, Profile, Author, Category, Tag):
             model.objects.all().delete()
 
         authors = {}
@@ -31,7 +31,8 @@ class Command(BaseCommand):
                 published=item["published"],
                 published_at=item["date"],
             )
-            post.tags.set([tags[name] for name in item["tags"]])
+            for tag_name in item["tags"]:
+                ArticleTag.objects.create(article=post, tag=tags[tag_name])
             for author_name, text in seed_data.comments_of(item):
                 Comment.objects.create(post=post, author_name=author_name, text=text)
 

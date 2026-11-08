@@ -20,16 +20,16 @@
       <dt>Usuario</dt><dd>{{ user.username }}</dd>
       <dt>Correo</dt><dd>{{ user.email|default:"-" }}</dd>
       <dt>Autor</dt><dd>{{ profile.author.name }}</dd>
-      <dt>Pais</dt><dd>{{ profile.country }}</dd>
+      <dt>País</dt><dd>{{ profile.country }}</dd>
     </dl>
     {% if profile.bio %}
-    <h2 class="section-title"><i class="bi bi-card-text" aria-hidden="true"></i> Biografia</h2>
+    <h2 class="section-title"><i class="bi bi-card-text" aria-hidden="true"></i> Biografía</h2>
     <p class="bio-text">{{ profile.bio|linebreaksbr }}</p>
     {% endif %}
   </div>
 
   <div class="info-card">
-    <h2 class="section-title"><i class="bi bi-journal-text" aria-hidden="true"></i> Mis articulos</h2>
+    <h2 class="section-title"><i class="bi bi-journal-text" aria-hidden="true"></i> Mis artículos</h2>
     <ul class="plain-list">
       {% for post in profile.author.posts.all %}
       <li>
@@ -37,7 +37,7 @@
         {% if not post.published %}<span class="status-badge draft">Borrador</span>{% endif %}
       </li>
       {% empty %}
-      <li class="muted">Todavia no has escrito articulos.</li>
+      <li class="muted">Todavía no has escrito artículos.</li>
       {% endfor %}
     </ul>
   </div>

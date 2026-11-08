@@ -1,5 +1,10 @@
 <nav class="navbar" aria-label="Navegacion principal">
   <div class="navbar-inner">
+    <!-- Boton hamburguesa (solo movil) -->
+    <button class="nav-menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-menu-icon"></span>
+    </button>
+
     <a href="{% url 'blog:front_page' %}" class="navbar-brand">
       <svg class="navbar-brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M12 20h9"></path>
@@ -8,7 +13,8 @@
       <span>Lab Blog</span>
     </a>
 
-    <ul class="navbar-nav">
+    <!-- Enlaces de navegacion (desktop) -->
+    <ul class="navbar-nav" id="nav-menu">
       <li class="nav-item">
         <a class="nav-link" href="{% url 'blog:front_page' %}">
           <i class="bi bi-house-fill" aria-hidden="true"></i><span>Inicio</span>
@@ -31,6 +37,7 @@
       </li>
     </ul>
 
+    <!-- Acciones de sesion (desktop) -->
     <ul class="navbar-nav navbar-nav-actions">
       {% if user.is_authenticated %}
         {% if perms.blog.add_post %}
@@ -68,3 +75,33 @@
     </ul>
   </div>
 </nav>
+
+<!-- Menu desplegable movil -->
+<div class="nav-mobile-overlay" id="nav-mobile-overlay" aria-hidden="true"></div>
+<div class="nav-mobile-panel" id="nav-mobile-panel" role="navigation" aria-label="Menu movil">
+  <button class="nav-mobile-close" aria-label="Cerrar menu">
+    <i class="bi bi-x-lg" aria-hidden="true"></i>
+  </button>
+  <ul class="nav-mobile-list">
+    <li><a class="nav-mobile-link" href="{% url 'blog:front_page' %}">Inicio</a></li>
+    <li><a class="nav-mobile-link" href="{% url 'blog:post_list' %}">Articulos</a></li>
+    <li><a class="nav-mobile-link" href="{% url 'blog:category_list' %}">Categorias</a></li>
+    <li><a class="nav-mobile-link" href="{% url 'blog:tag_list' %}">Etiquetas</a></li>
+    <li class="nav-mobile-divider"></li>
+    {% if user.is_authenticated %}
+      {% if perms.blog.add_post %}
+      <li><a class="nav-mobile-link" href="{% url 'blog:post_create' %}">Nuevo articulo</a></li>
+      {% endif %}
+      <li><a class="nav-mobile-link" href="{% url 'blog:profile' %}">{{ user.username }}</a></li>
+      <li>
+        <form class="nav-mobile-form" method="post" action="{% url 'blog:logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="nav-mobile-link nav-mobile-danger">Salir</button>
+        </form>
+      </li>
+    {% else %}
+      <li><a class="nav-mobile-link" href="{% url 'blog:login' %}">Entrar</a></li>
+      <li><a class="nav-mobile-link btn-mobile-primary" href="{% url 'blog:register' %}">Registrarse</a></li>
+    {% endif %}
+  </ul>
+</div>

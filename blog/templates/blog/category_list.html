@@ -1,16 +1,16 @@
 {% extends "blog/base.html" %}
 
-{% block title %}Categorias · Lab Blog{% endblock %}
+{% block title %}Categorías · Lab Blog{% endblock %}
 
 {% block content %}
 <div class="page-header with-action">
   <div>
-    <h1><i class="bi bi-folder-fill me-2" aria-hidden="true"></i>Categorias</h1>
-    <p class="subtitle">Categorias disponibles en el blog</p>
+    <h1><i class="bi bi-folder-fill me-2" aria-hidden="true"></i>Categorías</h1>
+    <p class="subtitle">Categorías disponibles en el blog</p>
   </div>
   {% if perms.blog.add_category %}
   <a href="{% url 'blog:category_create' %}" class="btn btn-primary">
-    <i class="bi bi-plus-lg" aria-hidden="true"></i> Nueva categoria
+    <i class="bi bi-plus-lg" aria-hidden="true"></i> Nueva categoría
   </a>
   {% endif %}
 </div>
@@ -18,7 +18,7 @@
 {% if categories %}
 <table class="data-table">
   <thead>
-    <tr><th>Nombre</th><th>Articulos</th>{% if perms.blog.change_category %}<th class="right">Acciones</th>{% endif %}</tr>
+    <tr><th>Nombre</th><th>Artículos</th>{% if perms.blog.change_category %}<th class="right">Acciones</th>{% endif %}</tr>
   </thead>
   <tbody>
     {% for category in categories %}
@@ -38,8 +38,8 @@
 {% else %}
 <div class="empty-state">
   <i class="bi bi-folder-x" aria-hidden="true"></i>
-  <h2>No hay categorias</h2>
-  <p>Las categorias ayudan a organizar los articulos.</p>
+  <h2>No hay categorías</h2>
+  <p>Las categorías ayudan a organizar los artículos.</p>
 </div>
 {% endif %}
 {% endblock %}

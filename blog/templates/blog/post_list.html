@@ -1,16 +1,16 @@
 {% extends "blog/base.html" %}
 
-{% block title %}Articulos · Lab Blog{% endblock %}
+{% block title %}Artículos · Lab Blog{% endblock %}
 
 {% block content %}
 <div class="page-header with-action">
   <div>
-    <h1><i class="bi bi-journal-richtext me-2" aria-hidden="true"></i>Articulos</h1>
-    <p class="subtitle">Listado de articulos del laboratorio</p>
+    <h1><i class="bi bi-journal-richtext me-2" aria-hidden="true"></i>Artículos publicados</h1>
+    <p class="subtitle">Explora los artículos más recientes del laboratorio</p>
   </div>
   {% if perms.blog.add_post %}
   <a href="{% url 'blog:post_create' %}" class="btn btn-primary">
-    <i class="bi bi-plus-lg" aria-hidden="true"></i> Nuevo articulo
+    <i class="bi bi-plus-lg" aria-hidden="true"></i> Nuevo artículo
   </a>
   {% endif %}
 </div>
@@ -40,8 +40,8 @@
 {% else %}
 <div class="empty-state">
   <i class="bi bi-journal-x" aria-hidden="true"></i>
-  <h2>No hay articulos</h2>
-  <p>Todavia no se ha publicado ningun articulo.</p>
+  <h2>No hay artículos</h2>
+  <p>Todavía no se ha publicado ningún artículo.</p>
 </div>
 {% endif %}
 {% endblock %}

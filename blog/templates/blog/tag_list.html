@@ -6,7 +6,7 @@
 <div class="page-header with-action">
   <div>
     <h1><i class="bi bi-tags-fill me-2" aria-hidden="true"></i>Etiquetas</h1>
-    <p class="subtitle">Etiquetas usadas en los articulos</p>
+    <p class="subtitle">Etiquetas usadas en los artículos</p>
   </div>
   {% if perms.blog.add_tag %}
   <a href="{% url 'blog:tag_create' %}" class="btn btn-primary">
@@ -18,7 +18,7 @@
 {% if tags %}
 <table class="data-table">
   <thead>
-    <tr><th>Nombre</th><th>Articulos</th>{% if perms.blog.change_tag %}<th class="right">Acciones</th>{% endif %}</tr>
+    <tr><th>Nombre</th><th>Artículos</th>{% if perms.blog.change_tag %}<th class="right">Acciones</th>{% endif %}</tr>
   </thead>
   <tbody>
     {% for tag in tags %}
@@ -39,7 +39,7 @@
 <div class="empty-state">
   <i class="bi bi-tags" aria-hidden="true"></i>
   <h2>No hay etiquetas</h2>
-  <p>Las etiquetas ayudan a clasificar los articulos.</p>
+  <p>Las etiquetas ayudan a clasificar los artículos.</p>
 </div>
 {% endif %}
 {% endblock %}

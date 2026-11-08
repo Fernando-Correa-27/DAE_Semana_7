@@ -1,12 +1,12 @@
 {% extends "blog/base.html" %}
 
-{% block title %}Iniciar sesion · Lab Blog{% endblock %}
+{% block title %}Iniciar sesión · Lab Blog{% endblock %}
 
 {% block content %}
 <div class="auth-card">
   <div class="auth-header">
     <i class="bi bi-box-arrow-in-right auth-icon" aria-hidden="true"></i>
-    <h1>Iniciar sesion</h1>
+    <h1>Iniciar sesión</h1>
     <p class="subtitle">Accede para participar en el Lab Blog</p>
   </div>
 
@@ -30,7 +30,7 @@
   </form>
 
   <p class="auth-footer">
-    No tienes cuenta? <a href="{% url 'blog:register' %}">Registrate</a>
+    ¿No tienes cuenta? <a href="{% url 'blog:register' %}">Regístrate</a>
   </p>
 </div>
 {% endblock %}

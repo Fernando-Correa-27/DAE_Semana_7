@@ -162,6 +162,28 @@ a:hover {
   justify-content: space-between;
   height: var(--nav-height);
   position: relative;
+  gap: var(--space-lg);
+}
+
+/* Zonas de la navbar: izquierda (hamburguesa + marca), centro (nav), derecha (acciones) */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.navbar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-left: auto;
 }
 
 /* Boton hamburguesa (solo movil) */
@@ -235,7 +257,6 @@ a:hover {
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: -0.02em;
-  margin-right: var(--space-lg);
 }
 
 .navbar-brand:hover {
@@ -288,7 +309,6 @@ a:hover {
   list-style: none;
   margin: 0;
   padding: 0;
-  margin-left: auto;
 }
 
 /* --- Main Content --- */
@@ -1027,13 +1047,17 @@ a:hover {
   /* Mostrar hamburguesa en movil */
   .nav-menu-toggle {
     display: flex;
-    margin-right: 0;
   }
 
-  /* Ocultar nav desktop en movil */
-  .navbar-nav,
-  .navbar-nav-actions {
+  /* Ocultar zona centro y derecha en movil */
+  .navbar-center,
+  .navbar-right {
     display: none;
+  }
+
+  /* La zona izquierda (hamburguesa + marca) se mantiene visible */
+  .navbar-left {
+    gap: var(--space-sm);
   }
 
   .page-header h1 {

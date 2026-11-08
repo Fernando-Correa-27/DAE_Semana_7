@@ -5,8 +5,8 @@
 {% block content %}
 <div class="page-header with-action">
   <div>
-    <h1><i class="bi bi-tags-fill me-2" aria-hidden="true"></i>Etiquetas</h1>
-    <p class="subtitle">Etiquetas usadas en los artículos</p>
+    <h1><i class="bi bi-tag me-2" aria-hidden="true"></i>Etiquetas</h1>
+    <p class="subtitle">Etiquetas temáticas utilizadas para clasificar los artículos</p>
   </div>
   {% if perms.blog.add_tag %}
   <a href="{% url 'blog:tag_create' %}" class="btn btn-primary">
@@ -16,30 +16,54 @@
 </div>
 
 {% if tags %}
-<table class="data-table">
-  <thead>
-    <tr><th>Nombre</th><th>Artículos</th>{% if perms.blog.change_tag %}<th class="right">Acciones</th>{% endif %}</tr>
-  </thead>
-  <tbody>
-    {% for tag in tags %}
-    <tr>
-      <td><i class="bi bi-hash" aria-hidden="true"></i> {{ tag.name }}</td>
-      <td>{{ tag.post_count }}</td>
-      {% if perms.blog.change_tag %}
-      <td class="right">
-        <a class="btn btn-sm btn-outline" href="{% url 'blog:tag_update' tag.pk %}"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-        <a class="btn btn-sm btn-danger" href="{% url 'blog:tag_delete' tag.pk %}"><i class="bi bi-trash" aria-hidden="true"></i></a>
-      </td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col" class="text-center">Artículos</th>
+        {% if perms.blog.change_tag %}
+        <th scope="col" class="right">Acciones</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for tag in tags %}
+      <tr>
+        <td class="table-item-name">
+          <i class="bi bi-hash table-row-icon" aria-hidden="true"></i>
+          <span class="fw-medium">{{ tag.name }}</span>
+        </td>
+        <td class="text-center">
+          <span class="badge-count">{{ tag.post_count }}</span>
+        </td>
+        {% if perms.blog.change_tag %}
+        <td class="right">
+          <div class="inline-actions">
+            <a class="btn btn-sm btn-outline" href="{% url 'blog:tag_update' tag.pk %}" title="Editar etiqueta" aria-label="Editar {{ tag.name }}">
+              <i class="bi bi-pencil" aria-hidden="true"></i>
+            </a>
+            <a class="btn btn-sm btn-danger" href="{% url 'blog:tag_delete' tag.pk %}" title="Eliminar etiqueta" aria-label="Eliminar {{ tag.name }}">
+              <i class="bi bi-trash3" aria-hidden="true"></i>
+            </a>
+          </div>
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% else %}
 <div class="empty-state">
   <i class="bi bi-tags" aria-hidden="true"></i>
   <h2>No hay etiquetas</h2>
-  <p>Las etiquetas ayudan a clasificar los artículos.</p>
+  <p>Las etiquetas ayudan a etiquetar y descubrir artículos por palabras clave.</p>
+  {% if perms.blog.add_tag %}
+  <a href="{% url 'blog:tag_create' %}" class="btn btn-primary mt-3">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i> Crear primera etiqueta
+  </a>
+  {% endif %}
 </div>
 {% endif %}
 {% endblock %}

@@ -5,8 +5,8 @@
 {% block content %}
 <div class="page-header with-action">
   <div>
-    <h1><i class="bi bi-folder-fill me-2" aria-hidden="true"></i>Categorías</h1>
-    <p class="subtitle">Categorías disponibles en el blog</p>
+    <h1><i class="bi bi-folder me-2" aria-hidden="true"></i>Categorías</h1>
+    <p class="subtitle">Explora y organiza los artículos del blog por temáticas</p>
   </div>
   {% if perms.blog.add_category %}
   <a href="{% url 'blog:category_create' %}" class="btn btn-primary">
@@ -16,30 +16,54 @@
 </div>
 
 {% if categories %}
-<table class="data-table">
-  <thead>
-    <tr><th>Nombre</th><th>Artículos</th>{% if perms.blog.change_category %}<th class="right">Acciones</th>{% endif %}</tr>
-  </thead>
-  <tbody>
-    {% for category in categories %}
-    <tr>
-      <td><i class="bi bi-folder2" aria-hidden="true"></i> {{ category.name }}</td>
-      <td>{{ category.post_count }}</td>
-      {% if perms.blog.change_category %}
-      <td class="right">
-        <a class="btn btn-sm btn-outline" href="{% url 'blog:category_update' category.pk %}"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-        <a class="btn btn-sm btn-danger" href="{% url 'blog:category_delete' category.pk %}"><i class="bi bi-trash" aria-hidden="true"></i></a>
-      </td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col" class="text-center">Artículos</th>
+        {% if perms.blog.change_category %}
+        <th scope="col" class="right">Acciones</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in categories %}
+      <tr>
+        <td class="table-item-name">
+          <i class="bi bi-folder table-row-icon" aria-hidden="true"></i>
+          <span class="fw-medium">{{ category.name }}</span>
+        </td>
+        <td class="text-center">
+          <span class="badge-count">{{ category.post_count }}</span>
+        </td>
+        {% if perms.blog.change_category %}
+        <td class="right">
+          <div class="inline-actions">
+            <a class="btn btn-sm btn-outline" href="{% url 'blog:category_update' category.pk %}" title="Editar categoría" aria-label="Editar {{ category.name }}">
+              <i class="bi bi-pencil" aria-hidden="true"></i>
+            </a>
+            <a class="btn btn-sm btn-danger" href="{% url 'blog:category_delete' category.pk %}" title="Eliminar categoría" aria-label="Eliminar {{ category.name }}">
+              <i class="bi bi-trash3" aria-hidden="true"></i>
+            </a>
+          </div>
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% else %}
 <div class="empty-state">
   <i class="bi bi-folder-x" aria-hidden="true"></i>
   <h2>No hay categorías</h2>
-  <p>Las categorías ayudan a organizar los artículos.</p>
+  <p>Las categorías ayudan a organizar y clasificar los artículos del blog.</p>
+  {% if perms.blog.add_category %}
+  <a href="{% url 'blog:category_create' %}" class="btn btn-primary mt-3">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i> Crear primera categoría
+  </a>
+  {% endif %}
 </div>
 {% endif %}
 {% endblock %}

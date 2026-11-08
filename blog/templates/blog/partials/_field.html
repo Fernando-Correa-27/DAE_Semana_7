@@ -1,8 +1,13 @@
 <div class="form-group">
   <label class="form-label" for="{{ field.id_for_label }}">
-    {{ field.label }}{% if field.field.required %}<span class="form-required" aria-hidden="true">*</span>{% endif %}
+    {% if field.name == 'country' or field.label == 'Pais' or field.label == 'Country' %}País{% elif field.name == 'bio' or field.label == 'Bio' %}Biografía{% elif field.name == 'name' or field.label == 'Nombre publico' %}Nombre público{% elif field.name == 'email' or field.label == 'Correo electronico' %}Correo electrónico{% elif field.name == 'title' %}Título{% elif field.name == 'category' %}Categoría{% elif field.name == 'tags' %}Etiquetas{% elif field.name == 'body' %}Contenido{% elif field.name == 'author' %}Autor{% elif field.name == 'published_at' %}Fecha de publicación{% elif field.name == 'published' %}Publicado{% elif field.name == 'username' %}Nombre de usuario{% elif field.name == 'first_name' %}Nombre{% elif field.name == 'last_name' %}Apellidos{% elif field.name == 'password' %}Contraseña{% elif field.name == 'password1' %}Contraseña{% elif field.name == 'password2' %}Confirmar contraseña{% else %}{{ field.label }}{% endif %}{% if field.field.required %}<span class="form-required" aria-hidden="true">*</span>{% endif %}
   </label>
   {{ field }}
   {% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}
-  {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+  {% for error in field.errors %}
+  <div class="form-error" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>{{ error }}</span>
+  </div>
+  {% endfor %}
 </div>

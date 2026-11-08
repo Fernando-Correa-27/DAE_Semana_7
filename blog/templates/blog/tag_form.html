@@ -5,18 +5,29 @@
 {% block content %}
 <div class="page-header">
   <h1>
-    <i class="bi bi-tags-fill me-2" aria-hidden="true"></i>
+    <i class="bi bi-tag me-2" aria-hidden="true"></i>
     {% if object %}Editar etiqueta{% else %}Nueva etiqueta{% endif %}
   </h1>
+  <p class="subtitle">{% if object %}Modifica el nombre de la etiqueta{% else %}Crea una nueva etiqueta para clasificar artículos{% endif %}</p>
 </div>
 
 <form method="post" class="card-form narrow" novalidate>
   {% csrf_token %}
+  {% if form.non_field_errors %}
+  <div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle alert-icon" aria-hidden="true"></i>
+    <div>{{ form.non_field_errors }}</div>
+  </div>
+  {% endif %}
+
   {% for field in form %}
     {% include "blog/partials/_field.html" with field=field %}
   {% endfor %}
+
   <div class="form-actions">
-    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg" aria-hidden="true"></i> Guardar</button>
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-check-lg" aria-hidden="true"></i> Guardar
+    </button>
     <a class="btn btn-outline" href="{% url 'blog:tag_list' %}">Cancelar</a>
   </div>
 </form>

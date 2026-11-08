@@ -3,43 +3,99 @@
 {% block title %}Mi perfil · Lab Blog{% endblock %}
 
 {% block content %}
-<div class="page-header with-action">
-  <div>
-    <h1><i class="bi bi-person-circle me-2" aria-hidden="true"></i>{{ profile.author.name }}</h1>
-    <p class="subtitle">{{ profile.country }}</p>
+<div class="profile-hero">
+  <div class="profile-hero-content">
+    <div class="profile-avatar">
+      <span>{{ profile.author.name|first|upper|default:user.username|first|upper }}</span>
+    </div>
+    <div class="profile-hero-info">
+      <h1 class="profile-name">{{ profile.author.name }}</h1>
+      <div class="profile-meta">
+        <span class="profile-badge">
+          <i class="bi bi-at" aria-hidden="true"></i>{% if user.username|first == '@' %}{{ user.username|slice:"1:" }}{% else %}{{ user.username }}{% endif %}
+        </span>
+        {% if profile.country and profile.country != "Sin especificar" %}
+        <span class="profile-badge">
+          <i class="bi bi-geo-alt" aria-hidden="true"></i>{{ profile.country }}
+        </span>
+        {% endif %}
+        {% if user.email %}
+        <span class="profile-badge">
+          <i class="bi bi-envelope" aria-hidden="true"></i>{{ user.email }}
+        </span>
+        {% endif %}
+      </div>
+    </div>
   </div>
-  <a href="{% url 'blog:profile_edit' %}" class="btn btn-primary">
-    <i class="bi bi-pencil" aria-hidden="true"></i> Editar perfil
-  </a>
+  <div class="profile-hero-actions">
+    <a href="{% url 'blog:profile_edit' %}" class="btn btn-primary">
+      <i class="bi bi-pencil" aria-hidden="true"></i> Editar perfil
+    </a>
+  </div>
 </div>
 
 <div class="profile-grid">
+  <!-- Tarjeta de información personal -->
   <div class="info-card">
-    <h2 class="section-title"><i class="bi bi-info-circle" aria-hidden="true"></i> Datos</h2>
+    <h2 class="section-title"><i class="bi bi-person-lines-fill" aria-hidden="true"></i> Información de la cuenta</h2>
     <dl class="detail-list">
-      <dt>Usuario</dt><dd>{{ user.username }}</dd>
-      <dt>Correo</dt><dd>{{ user.email|default:"-" }}</dd>
-      <dt>Autor</dt><dd>{{ profile.author.name }}</dd>
-      <dt>País</dt><dd>{{ profile.country }}</dd>
+      <dt>Usuario</dt>
+      <dd>{% if user.username|first == '@' %}{{ user.username }}{% else %}@{{ user.username }}{% endif %}</dd>
+      <dt>Correo electrónico</dt>
+      <dd>{{ user.email|default:"No especificado" }}</dd>
+      <dt>Nombre público</dt>
+      <dd>{{ profile.author.name }}</dd>
+      <dt>País</dt>
+      <dd>{{ profile.country|default:"Sin especificar" }}</dd>
     </dl>
+
     {% if profile.bio %}
-    <h2 class="section-title"><i class="bi bi-card-text" aria-hidden="true"></i> Biografía</h2>
-    <p class="bio-text">{{ profile.bio|linebreaksbr }}</p>
+    <div class="profile-bio-section">
+      <h3 class="bio-title"><i class="bi bi-card-text" aria-hidden="true"></i> Biografía</h3>
+      <p class="bio-text">{{ profile.bio|linebreaksbr }}</p>
+    </div>
     {% endif %}
   </div>
 
+  <!-- Tarjeta de artículos del autor -->
   <div class="info-card">
-    <h2 class="section-title"><i class="bi bi-journal-text" aria-hidden="true"></i> Mis artículos</h2>
-    <ul class="plain-list">
+    <div class="card-header-flex">
+      <h2 class="section-title"><i class="bi bi-journal-text" aria-hidden="true"></i> Mis artículos</h2>
+      <span class="badge-count">{{ profile.author.posts.count }}</span>
+    </div>
+
+    {% if profile.author.posts.all %}
+    <ul class="profile-posts-list">
       {% for post in profile.author.posts.all %}
-      <li>
-        <a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a>
-        {% if not post.published %}<span class="status-badge draft">Borrador</span>{% endif %}
+      <li class="profile-post-item">
+        <a class="profile-post-link" href="{% url 'blog:post_detail' post.pk %}">
+          <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
+          <span>{{ post.title }}</span>
+        </a>
+        <div class="profile-post-meta">
+          {% if not post.published %}
+          <span class="status-badge draft"><i class="bi bi-clock-history" aria-hidden="true"></i>Borrador</span>
+          {% else %}
+          <span class="status-badge published"><i class="bi bi-check-circle" aria-hidden="true"></i>Publicado</span>
+          {% endif %}
+        </div>
       </li>
-      {% empty %}
-      <li class="muted">Todavía no has escrito artículos.</li>
       {% endfor %}
     </ul>
+    {% else %}
+    <div class="empty-state-card">
+      <div class="empty-icon-wrapper">
+        <i class="bi bi-journal-plus" aria-hidden="true"></i>
+      </div>
+      <h3>Todavía no has escrito artículos</h3>
+      <p>Comparte tus ideas, análisis o descubrimientos redactando tu primera publicación en el blog.</p>
+      {% if perms.blog.add_post %}
+      <a href="{% url 'blog:post_create' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i> Escribir mi primer artículo
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

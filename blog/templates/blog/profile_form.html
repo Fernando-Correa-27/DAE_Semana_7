@@ -3,38 +3,27 @@
 {% block title %}Editar perfil · Lab Blog{% endblock %}
 
 {% block content %}
-<div class="page-header">
+<div class="page-header text-center-mobile">
   <h1><i class="bi bi-pencil-square me-2" aria-hidden="true"></i>Editar perfil</h1>
+  <p class="subtitle">Actualiza tus datos públicos y biografía en el laboratorio</p>
 </div>
 
 <form method="post" class="card-form narrow" novalidate>
   {% csrf_token %}
   {% if form.non_field_errors %}
-  <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  <div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle alert-icon" aria-hidden="true"></i>
+    <div>{{ form.non_field_errors }}</div>
+  </div>
   {% endif %}
 
   {% for field in form %}
-    {% if field.name == 'country' %}
-    <div class="form-group">
-      <label class="form-label" for="{{ field.id_for_label }}">País <span class="form-required" aria-hidden="true">*</span></label>
-      {{ field }}
-      {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
-    </div>
-    {% elif field.name == 'bio' %}
-    <div class="form-group">
-      <label class="form-label" for="{{ field.id_for_label }}">Biografía</label>
-      {{ field }}
-      {% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}
-      {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
-    </div>
-    {% else %}
-      {% include "blog/partials/_field.html" with field=field %}
-    {% endif %}
+    {% include "blog/partials/_field.html" with field=field %}
   {% endfor %}
 
   <div class="form-actions">
     <button type="submit" class="btn btn-primary">
-      <i class="bi bi-check-lg" aria-hidden="true"></i> Guardar
+      <i class="bi bi-check-lg" aria-hidden="true"></i> Guardar cambios
     </button>
     <a class="btn btn-outline" href="{% url 'blog:profile' %}">Cancelar</a>
   </div>

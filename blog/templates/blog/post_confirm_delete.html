@@ -1,17 +1,21 @@
 {% extends "blog/base.html" %}
 
-{% block title %}Eliminar articulo · Lab Blog{% endblock %}
+{% block title %}Eliminar artículo · Lab Blog{% endblock %}
 
 {% block content %}
 <div class="confirm-card">
-  <div class="confirm-icon danger"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></div>
-  <h1>Eliminar articulo</h1>
-  <p>Estas a punto de eliminar el articulo <strong>{{ object.title }}</strong>. Esta accion no se puede deshacer y borrara sus comentarios asociados.</p>
+  <div class="confirm-icon danger">
+    <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+  </div>
+  <h1>Eliminar artículo</h1>
+  <p>Estás a punto de eliminar el artículo <strong>«{{ object.title }}»</strong>. Esta acción no se puede deshacer y borrará permanentemente sus comentarios asociados.</p>
 
   <form method="post">
     {% csrf_token %}
     <div class="form-actions center">
-      <button type="submit" class="btn btn-danger"><i class="bi bi-trash" aria-hidden="true"></i> Si, eliminar</button>
+      <button type="submit" class="btn btn-danger">
+        <i class="bi bi-trash3" aria-hidden="true"></i> Sí, eliminar artículo
+      </button>
       <a class="btn btn-outline" href="{% url 'blog:post_detail' object.pk %}">Cancelar</a>
     </div>
   </form>

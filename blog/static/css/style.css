@@ -59,7 +59,8 @@
   --btn-primary-text: #f0eef8;
 
   /* Typography */
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Libre Bodoni', 'Georgia', serif;
+  --font-body: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
   /* Spacing scale (8px base) */
@@ -110,11 +111,37 @@ html {
 }
 
 body {
-  font-family: var(--font-primary);
+  font-family: var(--font-body);
   background-color: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.65;
   min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+/* --- Skip to content (accessibility) --- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-lavender);
+  color: #000;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  z-index: 9999;
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: var(--space-md);
 }
 
 a {
@@ -152,7 +179,8 @@ a:hover {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  font-size: 1.125rem;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: -0.02em;
@@ -211,8 +239,9 @@ a:hover {
 }
 
 .page-header h1 {
+  font-family: var(--font-heading);
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--text-primary);
   margin-bottom: var(--space-sm);
@@ -303,22 +332,24 @@ a:hover {
 .post-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
   transition: all var(--transition-base);
   position: relative;
 }
 
 .post-card:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  border-color: var(--accent-lavender);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 .post-card:focus-within {
   border-color: var(--accent-lavender);
   box-shadow: var(--shadow-glow-lavender);
+  outline: 2px solid var(--accent-lavender);
+  outline-offset: 4px;
 }
 
 .post-card-header {
@@ -329,12 +360,13 @@ a:hover {
 }
 
 .post-card-title {
+  font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: -0.01em;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .post-card-title a {
@@ -352,7 +384,7 @@ a:hover {
   gap: var(--space-sm);
   margin-bottom: var(--space-md);
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .post-card-meta-item {
@@ -384,12 +416,12 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 100px;
   font-size: 0.75rem;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary);
+  font-weight: 600;
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
   border: 1px solid var(--border-color);
   transition: all var(--transition-fast);
 }
@@ -446,7 +478,7 @@ a:hover {
 /* --- Footer --- */
 .footer {
   border-top: 1px solid var(--border-color);
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-2xl) var(--space-lg);
   margin-top: var(--space-3xl);
   text-align: center;
 }
@@ -458,7 +490,7 @@ a:hover {
 
 .footer p {
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 /* --- Buttons --- */
@@ -494,7 +526,11 @@ a:hover {
   background: var(--btn-primary-hover);
   border-color: var(--btn-primary-hover);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-sm {
@@ -507,13 +543,13 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 100px;
   font-size: 0.75rem;
-  font-weight: 500;
-  background: var(--accent-steel-glow);
-  color: var(--accent-steel);
-  border: 1px solid rgba(107, 154, 181, 0.2);
+  font-weight: 600;
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 /* --- Responsive --- */
@@ -679,11 +715,11 @@ a:hover {
   border: 1px solid transparent;
 }
 
-.alert-success { background: var(--success-bg); color: var(--success); border-color: rgba(90, 158, 122, 0.3); }
+.alert-success { background: var(--success-bg); color: var(--success); border-color: rgba(90, 158, 122, 0.4); }
 .alert-error,
-.alert-danger { background: var(--danger-bg); color: var(--danger); border-color: rgba(199, 90, 106, 0.3); }
-.alert-warning { background: var(--warning-bg); color: var(--warning); border-color: rgba(201, 165, 90, 0.3); }
-.alert-info { background: var(--info-bg); color: var(--info); border-color: rgba(107, 154, 181, 0.3); }
+.alert-danger { background: var(--danger-bg); color: var(--danger); border-color: rgba(199, 90, 106, 0.4); }
+.alert-warning { background: var(--warning-bg); color: var(--warning); border-color: rgba(201, 165, 90, 0.4); }
+.alert-info { background: var(--info-bg); color: var(--info); border-color: rgba(107, 154, 181, 0.4); }
 
 /* --- Forms --- */
 .card-form {
@@ -730,11 +766,17 @@ a:hover {
   padding: 10px 12px;
   background: rgba(0, 0, 0, 0.22);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: inherit;
   font-size: 0.9375rem;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 .form-control:focus,
@@ -742,6 +784,7 @@ a:hover {
   outline: none;
   border-color: var(--accent-lavender);
   box-shadow: 0 0 0 3px var(--accent-lavender-glow);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .form-check-input {
@@ -858,8 +901,9 @@ a:hover {
 
 .post-body {
   color: var(--text-secondary);
-  line-height: 1.75;
+  line-height: 1.8;
   margin-bottom: var(--space-lg);
+  font-size: 1rem;
 }
 
 /* --- Comments --- */
@@ -878,9 +922,14 @@ a:hover {
 .comment {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--space-md);
   margin-bottom: var(--space-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.comment:hover {
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .comment-header {
@@ -892,10 +941,11 @@ a:hover {
   color: var(--text-muted);
 }
 
-.comment-author { color: var(--text-secondary); font-weight: 600; }
+.comment-author { color: var(--text-primary); font-weight: 600; }
 
 .comment-text {
   color: var(--text-secondary);
+  line-height: 1.6;
   margin-bottom: var(--space-sm);
 }
 
@@ -997,17 +1047,19 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 38px;
-  height: 38px;
+  min-width: 42px;
+  height: 42px;
   padding: 0 var(--space-sm);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  font-weight: 500;
   transition: all var(--transition-fast);
 }
 
-.page-link:hover { color: var(--text-primary); border-color: var(--accent-lavender); }
+.page-link:hover { color: var(--accent-lavender); border-color: var(--accent-lavender); background: var(--bg-card-hover); }
+.page-link:focus-visible { outline: 2px solid var(--accent-lavender); outline-offset: 2px; }
 .page-link.active { background: var(--btn-primary); color: var(--btn-primary-text); border-color: var(--btn-primary); }
 .page-link.disabled { opacity: 0.4; pointer-events: none; }
 

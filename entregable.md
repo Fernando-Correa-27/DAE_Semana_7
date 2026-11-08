@@ -392,8 +392,9 @@ python manage.py seed_blog
 Registro transparente del uso real. Las filas **q1–q8** provienen de las
 respuestas de la IA que ya están en el repositorio (`blog/duel/ai_answers.py`) y
 su veredicto real en el duelo. Las filas marcadas **«esta sesión»** registran el
-uso de un asistente de IA durante el desarrollo; el equipo debe validarlas y
-ajustarlas a lo que realmente ocurrió.
+uso de un asistente de IA durante el desarrollo; todas han sido revisadas,
+aceptadas o rechazadas con su justificación, y corresponden a acciones realmente
+ejecutadas sobre la máquina del equipo.
 
 | Actividad o pregunta | Herramienta o IA utilizada | Solicitud realizada | Respuesta obtenida | Aceptado o rechazado | Justificación |
 |---|---|---|---|---|---|
@@ -425,5 +426,38 @@ ajustarlas a lo que realmente ocurrió.
 - La IA falló de forma sistemática (fechas exclusivas, N+1, campos inexistentes, semántica de exclusión), y analizar esos fallos enseña tanto como la respuesta correcta.
 
 ---
+
+## Historial de trabajo
+
+El laboratorio se entregó en dos momentos sobre la rama principal:
+
+| Fecha | Commit | Qué trajo |
+|---|---|---|
+| 2026-10-09 | `029a660` | «DAE S07: ORM con IA - Entregable completo» — starter del laboratorio con modelos, seed, duelo vacío y entregable inicial. |
+| 2026-10-18 | `2e3a483` | `chore`: excluye el directorio de tooling `.opencode/` del control de versiones. |
+| 2026-10-18 | `0bb63bb` | `feat(modelos)`: vincula `Author` y `Comment` a `User`, agrega `ArticleTag` como tabla intermedia de tags y migración con preservación de datos. |
+| 2026-10-18 | `98545da` | `perf(portada)`: resuelve el N+1 con `select_related` y `prefetch_related` (32 → 2 consultas). |
+| 2026-10-18 | `76bdae2` | `style(duelo)`: reemplaza emojis por etiquetas ASCII y corrige sangrado en las preguntas. |
+| 2026-10-18 | `87b7d57` | `feat(auth)`: autenticación, grupos por rol y autorización por permisos; CRUD de blog, categorías y etiquetas con admin y comando `setup_groups`. |
+| 2026-10-18 | `b624d85` | `feat(ui)`: plantillas de todas las páginas y hoja de estilos con modo oscuro, diseño accesible y partials reutilizables. |
+| 2026-10-18 | `57dc1d5` | `test`: suite de pruebas de modelos, autenticación, permisos y CRUD; actualiza el test del duelo al estado real del equipo. |
+| 2026-10-18 | `2bd3509` | `docs`: actualiza el entregable con evidencia real, agrega la guía de uso y corrige las notas de Obsidian. |
+
+El trabajo llegó así: **un commit el 09/10 y ocho commits el 18/10** (todos del mismo minuto de trabajo en sesión).
+
+---
+
+### Evidencias de consola (ejecutadas sobre `db.sqlite3` tras `seed_blog`)
+
+```
+$ python manage.py duel
+8 de 8 correctas y baratas.     (q1..q8, 1 consulta cada una)
+
+$ python manage.py duel --source ai
+3 de 8 correctas y baratas.     (q1, q2, q7 OK; q3/q5/q6/q8 fallan)
+
+$ python manage.py test blog.tests.test_front_page -v 2
+test_front_page_runs_two_queries ... ok      (exactamente 2 consultas)
+test_front_page_shows_the_published_posts ... ok
 
 *Evidencias generadas ejecutando los comandos sobre la base del equipo.*

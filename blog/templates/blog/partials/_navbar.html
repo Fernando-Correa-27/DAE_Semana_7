@@ -1,8 +1,8 @@
-<nav class="navbar" aria-label="Navegacion principal">
+<nav class="navbar" aria-label="Navegación principal">
   <div class="navbar-inner">
-    <!-- Zona izquierda: hamburguesa + marca -->
+    <!-- Zona izquierda: Botón menú móvil (hamburguesa) y Marca / Logo -->
     <div class="navbar-left">
-      <button class="nav-menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile-panel">
+      <button class="nav-menu-toggle" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="nav-mobile-panel">
         <span class="nav-menu-icon"></span>
       </button>
 
@@ -15,52 +15,53 @@
       </a>
     </div>
 
-    <!-- Zona centro: enlaces de navegacion (desktop) -->
+    <!-- Zona centro: Enlaces principales de navegación (Escritorio) -->
     <div class="navbar-center">
       <ul class="navbar-nav" id="nav-menu">
         <li class="nav-item">
           <a class="nav-link" href="{% url 'blog:front_page' %}">
-            <i class="bi bi-house-fill" aria-hidden="true"></i><span>Inicio</span>
+            <i class="bi bi-house" aria-hidden="true"></i><span>Inicio</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'blog:post_list' %}">
-            <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i><span>Articulos</span>
+            <i class="bi bi-file-earmark-text" aria-hidden="true"></i><span>Artículos</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'blog:category_list' %}">
-            <i class="bi bi-folder-fill" aria-hidden="true"></i><span>Categorias</span>
+            <i class="bi bi-folder" aria-hidden="true"></i><span>Categorías</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'blog:tag_list' %}">
-            <i class="bi bi-tags-fill" aria-hidden="true"></i><span>Etiquetas</span>
+            <i class="bi bi-tag" aria-hidden="true"></i><span>Etiquetas</span>
           </a>
         </li>
       </ul>
     </div>
 
-    <!-- Zona derecha: acciones de sesion (desktop) -->
+    <!-- Zona derecha: Acciones de sesión y usuario (Escritorio) -->
     <div class="navbar-right">
       <ul class="navbar-nav navbar-nav-actions">
         {% if user.is_authenticated %}
           {% if perms.blog.add_post %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'blog:post_create' %}">
-              <i class="bi bi-plus-lg" aria-hidden="true"></i><span>Nuevo articulo</span>
+            <a class="nav-link nav-link-highlight" href="{% url 'blog:post_create' %}">
+              <i class="bi bi-plus-lg" aria-hidden="true"></i><span>Nuevo artículo</span>
             </a>
           </li>
           {% endif %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'blog:profile' %}">
-              <i class="bi bi-person-circle" aria-hidden="true"></i><span>{{ user.username }}</span>
+            <a class="nav-link nav-link-user" href="{% url 'blog:profile' %}" title="Ver perfil">
+              <i class="bi bi-person-circle" aria-hidden="true"></i>
+              <span>{% if user.username|first == '@' %}{{ user.username }}{% else %}@{{ user.username }}{% endif %}</span>
             </a>
           </li>
           <li class="nav-item">
             <form class="logout-form" method="post" action="{% url 'blog:logout' %}">
               {% csrf_token %}
-              <button type="submit" class="nav-link nav-link-button">
+              <button type="submit" class="nav-link nav-link-button" title="Cerrar sesión">
                 <i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Salir</span>
               </button>
             </form>
@@ -82,32 +83,42 @@
   </div>
 </nav>
 
-<!-- Menu desplegable movil -->
+<!-- Menú lateral móvil responsive con panel deslizable y fondo desenfocado -->
 <div class="nav-mobile-overlay" id="nav-mobile-overlay" aria-hidden="true"></div>
-<div class="nav-mobile-panel" id="nav-mobile-panel" role="navigation" aria-label="Menu movil">
-  <button class="nav-mobile-close" aria-label="Cerrar menu">
-    <i class="bi bi-x-lg" aria-hidden="true"></i>
-  </button>
+<div class="nav-mobile-panel" id="nav-mobile-panel" role="navigation" aria-label="Menú móvil" aria-hidden="true">
+  <div class="nav-mobile-header">
+    <div class="navbar-brand">
+      <svg class="navbar-brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+      </svg>
+      <span>Lab Blog</span>
+    </div>
+    <button class="nav-mobile-close" aria-label="Cerrar menú">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+
   <ul class="nav-mobile-list">
-    <li><a class="nav-mobile-link" href="{% url 'blog:front_page' %}">Inicio</a></li>
-    <li><a class="nav-mobile-link" href="{% url 'blog:post_list' %}">Articulos</a></li>
-    <li><a class="nav-mobile-link" href="{% url 'blog:category_list' %}">Categorias</a></li>
-    <li><a class="nav-mobile-link" href="{% url 'blog:tag_list' %}">Etiquetas</a></li>
+    <li><a class="nav-mobile-link" href="{% url 'blog:front_page' %}"><i class="bi bi-house" aria-hidden="true"></i><span>Inicio</span></a></li>
+    <li><a class="nav-mobile-link" href="{% url 'blog:post_list' %}"><i class="bi bi-file-earmark-text" aria-hidden="true"></i><span>Artículos</span></a></li>
+    <li><a class="nav-mobile-link" href="{% url 'blog:category_list' %}"><i class="bi bi-folder" aria-hidden="true"></i><span>Categorías</span></a></li>
+    <li><a class="nav-mobile-link" href="{% url 'blog:tag_list' %}"><i class="bi bi-tag" aria-hidden="true"></i><span>Etiquetas</span></a></li>
     <li class="nav-mobile-divider"></li>
     {% if user.is_authenticated %}
       {% if perms.blog.add_post %}
-      <li><a class="nav-mobile-link" href="{% url 'blog:post_create' %}">Nuevo articulo</a></li>
+      <li><a class="nav-mobile-link" href="{% url 'blog:post_create' %}"><i class="bi bi-plus-lg" aria-hidden="true"></i><span>Nuevo artículo</span></a></li>
       {% endif %}
-      <li><a class="nav-mobile-link" href="{% url 'blog:profile' %}">{{ user.username }}</a></li>
+      <li><a class="nav-mobile-link" href="{% url 'blog:profile' %}"><i class="bi bi-person-circle" aria-hidden="true"></i><span>{% if user.username|first == '@' %}{{ user.username }}{% else %}@{{ user.username }}{% endif %}</span></a></li>
       <li>
         <form class="nav-mobile-form" method="post" action="{% url 'blog:logout' %}">
           {% csrf_token %}
-          <button type="submit" class="nav-mobile-link nav-mobile-danger">Salir</button>
+          <button type="submit" class="nav-mobile-link nav-mobile-danger"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Salir</span></button>
         </form>
       </li>
     {% else %}
-      <li><a class="nav-mobile-link" href="{% url 'blog:login' %}">Entrar</a></li>
-      <li><a class="nav-mobile-link btn-mobile-primary" href="{% url 'blog:register' %}">Registrarse</a></li>
+      <li><a class="nav-mobile-link" href="{% url 'blog:login' %}"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i><span>Entrar</span></a></li>
+      <li><a class="nav-mobile-link btn-mobile-primary" href="{% url 'blog:register' %}"><i class="bi bi-person-plus" aria-hidden="true"></i><span>Registrarse</span></a></li>
     {% endif %}
   </ul>
 </div>

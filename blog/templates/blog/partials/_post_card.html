@@ -1,40 +1,50 @@
 <article class="post-card">
+  <div class="post-card-top-meta">
+    {% if post.category %}
+    <span class="category-pill">
+      <i class="bi bi-folder" aria-hidden="true"></i>{{ post.category.name }}
+    </span>
+    {% endif %}
+    {% if not post.published %}
+    <span class="status-badge draft">
+      <i class="bi bi-clock-history" aria-hidden="true"></i>Borrador
+    </span>
+    {% endif %}
+  </div>
+
   <div class="post-card-header">
     <h2 class="post-card-title">
       <a href="{% url 'blog:post_detail' post.pk %}">
-        <i class="bi bi-file-earmark-richtext me-2" aria-hidden="true"></i>{{ post.title }}
+        <i class="bi bi-file-earmark-text post-card-title-icon" aria-hidden="true"></i>{{ post.title }}
       </a>
     </h2>
-    {% if not post.published %}
-    <span class="status-badge draft">Borrador</span>
-    {% endif %}
   </div>
 
   <div class="post-card-meta">
     <span class="post-card-meta-item">
-      <i class="bi bi-person-fill post-card-meta-icon" aria-hidden="true"></i>{{ post.author.name }}
+      <i class="bi bi-person" aria-hidden="true"></i>{{ post.author.name }}
     </span>
-    {% if post.published_at %}
+    {% if post.author.profile.country and post.author.profile.country != "Sin especificar" %}
     <span class="post-card-meta-item">
-      <i class="bi bi-calendar3 post-card-meta-icon" aria-hidden="true"></i>{{ post.published_at|date:"d/m/Y" }}
+      <i class="bi bi-geo-alt" aria-hidden="true"></i>{{ post.author.profile.country }}
     </span>
     {% endif %}
-    {% if post.category %}
-    <span class="category-pill">
-      <i class="bi bi-folder-fill" aria-hidden="true"></i>{{ post.category.name }}
+    {% if post.published_at %}
+    <span class="post-card-meta-item">
+      <i class="bi bi-calendar3" aria-hidden="true"></i>{{ post.published_at|date:"d/m/Y" }}
     </span>
     {% endif %}
   </div>
 
   {% if post.body %}
-  <p class="post-card-body-preview">{{ post.body|truncatewords:40|linebreaks }}</p>
+  <p class="post-card-body-preview">{{ post.body|truncatewords:35 }}</p>
   {% endif %}
 
   <div class="post-card-tags">
     {% for tag in post.tags.all %}
     <span class="tag-badge"><i class="bi bi-hash" aria-hidden="true"></i>{{ tag.name }}</span>
     {% empty %}
-    <span class="tag-badge"><em>Sin etiquetas</em></span>
+    <span class="tag-badge tag-badge-empty"><em>Sin etiquetas</em></span>
     {% endfor %}
   </div>
 </article>

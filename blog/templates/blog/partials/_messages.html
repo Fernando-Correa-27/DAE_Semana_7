@@ -1,8 +1,16 @@
 {% if messages %}
-<div class="messages" role="status" aria-live="polite">
+<div class="messages-container" role="status" aria-live="polite">
   {% for message in messages %}
   <div class="alert alert-{{ message.tags|default:'info' }}">
+    {% if 'success' in message.tags %}
+    <i class="bi bi-check-circle alert-icon" aria-hidden="true"></i>
+    {% elif 'error' in message.tags or 'danger' in message.tags %}
+    <i class="bi bi-exclamation-octagon alert-icon" aria-hidden="true"></i>
+    {% elif 'warning' in message.tags %}
+    <i class="bi bi-exclamation-triangle alert-icon" aria-hidden="true"></i>
+    {% else %}
     <i class="bi bi-info-circle alert-icon" aria-hidden="true"></i>
+    {% endif %}
     <span>{{ message }}</span>
   </div>
   {% endfor %}
